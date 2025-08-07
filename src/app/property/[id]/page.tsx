@@ -1,4 +1,3 @@
-import { useParams } from "next/navigation";
 import PropertyDetail from "./PropertyDetail";
 
 export async function generateStaticParams() {
