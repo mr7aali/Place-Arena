@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
@@ -26,7 +25,7 @@ export default function Signup() {
       [name]: value,
     }));
   };
-
+  console.log("From Signup Page", formData);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -54,12 +53,46 @@ export default function Signup() {
     setSubmitStatus("");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          role: formData.userType,
+          password: formData.password,
+          phoneNumber: formData.phone,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setSubmitStatus(data.error || "Something went wrong");
+        return;
+      }
+
       setSubmitStatus(
         "Account created successfully! Please check your email for verification."
       );
+
+      // Reset form on success
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirmPassword: "",
+        userType: "tenant",
+      });
     } catch (error) {
-      setSubmitStatus("Error creating account. Please try again.");
+      console.error("Signup error:", error);
+      setSubmitStatus(
+        "Network error. Please check your connection and try again."
+      );
     } finally {
       setIsSubmitting(false);
     }

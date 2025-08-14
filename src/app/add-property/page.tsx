@@ -167,7 +167,7 @@ export default function AddProperty() {
       setIsSubmitting(false);
     }
   };
-
+  console.log(formData);
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0">
       <Header />
