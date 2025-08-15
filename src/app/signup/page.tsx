@@ -25,7 +25,7 @@ export default function Signup() {
       [name]: value,
     }));
   };
-  console.log("From Signup Page", formData);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

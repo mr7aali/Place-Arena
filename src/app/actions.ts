@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
 
 export async function getUserProfile() {
   const cookieStore = await cookies();
@@ -21,6 +20,7 @@ export async function getUserProfile() {
     });
 
     const profileData = await res.json();
+
     if (profileData.success) {
       return profileData?.data;
     } else {
@@ -36,7 +36,7 @@ export async function getUserProfile() {
       );
 
       const accesTokenResponse = await refreshtokenRes.json();
-      console.log(accesTokenResponse);
+
       if (!!accesTokenResponse.accessToken) {
         cookieStore.set({
           name: "accessToken",

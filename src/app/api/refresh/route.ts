@@ -1,6 +1,6 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const apiResponse = await fetch(
       "http://localhost:5000/api/v1/auth/refresh",

@@ -189,7 +189,7 @@ export default function Home() {
     };
     fetchUserProfile();
   }, []);
-  console.log(userProfile);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0 flex flex-col">
       <Header />
