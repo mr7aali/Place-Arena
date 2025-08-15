@@ -60,8 +60,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      {/* <Header /> */}
-
       <div className="flex items-center justify-center min-h-[80vh] px-6">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">

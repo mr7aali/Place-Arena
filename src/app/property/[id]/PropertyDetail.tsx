@@ -67,7 +67,6 @@ export default function PropertyDetail({ propertyId }: PropertyDetailProps) {
   if (!property) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0">
-        <Header />
         <div className="max-w-4xl mx-auto px-4 md:px-6 py-12 text-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Property Not Found
@@ -106,8 +105,6 @@ export default function PropertyDetail({ propertyId }: PropertyDetailProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0">
-      <Header />
-
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-12">
         {/* Property Images Gallery */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden mb-6">

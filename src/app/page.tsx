@@ -179,8 +179,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0 flex flex-col">
-      {/* <Header /> */}
-
       {/* Compact Hero Section */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-8">
         <div className="max-w-7xl mx-auto text-center text-white">

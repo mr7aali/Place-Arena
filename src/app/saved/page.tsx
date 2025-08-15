@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Header from '../../components/Header';
-import PropertyCard from '../../components/PropertyCard';
-import MobileBottomNav from '../../components/MobileBottomNav';
+import { useState, useEffect } from "react";
+import Header from "../../components/Header";
+import PropertyCard from "../../components/PropertyCard";
+import MobileBottomNav from "../../components/MobileBottomNav";
 
 const sampleProperties = [
   {
@@ -15,8 +15,9 @@ const sampleProperties = [
     rooms: 3,
     bathrooms: 2,
     area: "1200 sq ft",
-    image: "https://readdy.ai/api/search-image?query=Modern%20luxury%20office%20space%20interior%20with%20spacious%20work%20areas%2C%20contemporary%20furniture%2C%20large%20windows%20with%20natural%20light%2C%20elegant%20conference%20room%20and%20reception%20area%2C%20premium%20finishes%20and%20sophisticated%20design%20elements%2C%20professional%20business%20photography&width=400&height=300&seq=prop-office-1&orientation=landscape",
-    features: ["Conference Room", "Parking", "Security", "Generator"]
+    image:
+      "https://readdy.ai/api/search-image?query=Modern%20luxury%20office%20space%20interior%20with%20spacious%20work%20areas%2C%20contemporary%20furniture%2C%20large%20windows%20with%20natural%20light%2C%20elegant%20conference%20room%20and%20reception%20area%2C%20premium%20finishes%20and%20sophisticated%20design%20elements%2C%20professional%20business%20photography&width=400&height=300&seq=prop-office-1&orientation=landscape",
+    features: ["Conference Room", "Parking", "Security", "Generator"],
   },
   {
     id: 2,
@@ -27,8 +28,9 @@ const sampleProperties = [
     rooms: 1,
     bathrooms: 1,
     area: "600 sq ft",
-    image: "https://readdy.ai/api/search-image?query=Cozy%20bachelor%20studio%20apartment%20with%20modern%20minimalist%20design%2C%20compact%20living%20space%20with%20bed%2C%20study%20area%2C%20kitchenette%2C%20warm%20lighting%20and%20contemporary%20furniture%2C%20efficient%20space%20utilization%2C%20professional%20real%20estate%20photography&width=400&height=300&seq=prop-bach-2&orientation=landscape",
-    features: ["Furnished", "WiFi", "AC", "Kitchen"]
+    image:
+      "https://readdy.ai/api/search-image?query=Cozy%20bachelor%20studio%20apartment%20with%20modern%20minimalist%20design%2C%20compact%20living%20space%20with%20bed%2C%20study%20area%2C%20kitchenette%2C%20warm%20lighting%20and%20contemporary%20furniture%2C%20efficient%20space%20utilization%2C%20professional%20real%20estate%20photography&width=400&height=300&seq=prop-bach-2&orientation=landscape",
+    features: ["Furnished", "WiFi", "AC", "Kitchen"],
   },
   {
     id: 7,
@@ -39,24 +41,27 @@ const sampleProperties = [
     rooms: 3,
     bathrooms: 2,
     area: "1300 sq ft",
-    image: "https://readdy.ai/api/search-image?query=Beautiful%20family%20apartment%20with%20spacious%20living%20areas%2C%20modern%20kitchen%2C%20comfortable%20bedrooms%2C%20balcony%20with%20city%20view%2C%20contemporary%20interior%20design%2C%20natural%20lighting%20and%20premium%20finishes&width=400&height=300&seq=prop-fam-7&orientation=landscape",
-    features: ["Balcony", "Parking", "Security", "Generator"]
-  }
+    image:
+      "https://readdy.ai/api/search-image?query=Beautiful%20family%20apartment%20with%20spacious%20living%20areas%2C%20modern%20kitchen%2C%20comfortable%20bedrooms%2C%20balcony%20with%20city%20view%2C%20contemporary%20interior%20design%2C%20natural%20lighting%20and%20premium%20finishes&width=400&height=300&seq=prop-fam-7&orientation=landscape",
+    features: ["Balcony", "Parking", "Security", "Generator"],
+  },
 ];
 
 export default function SavedProperties() {
   const [savedProperties, setSavedProperties] = useState<number[]>([]);
-  const [savedPropertiesData, setSavedPropertiesData] = useState<typeof sampleProperties>([]);
+  const [savedPropertiesData, setSavedPropertiesData] = useState<
+    typeof sampleProperties
+  >([]);
 
   useEffect(() => {
     // Load saved properties from localStorage
-    const saved = localStorage.getItem('savedProperties');
+    const saved = localStorage.getItem("savedProperties");
     if (saved) {
       const savedIds = JSON.parse(saved);
       setSavedProperties(savedIds);
-      
+
       // Filter properties that are saved
-      const savedData = sampleProperties.filter(property => 
+      const savedData = sampleProperties.filter((property) =>
         savedIds.includes(property.id)
       );
       setSavedPropertiesData(savedData);
@@ -64,18 +69,18 @@ export default function SavedProperties() {
   }, []);
 
   const removeSavedProperty = (propertyId: number) => {
-    const updatedSaved = savedProperties.filter(id => id !== propertyId);
+    const updatedSaved = savedProperties.filter((id) => id !== propertyId);
     setSavedProperties(updatedSaved);
-    localStorage.setItem('savedProperties', JSON.stringify(updatedSaved));
-    
-    const updatedData = savedPropertiesData.filter(property => property.id !== propertyId);
+    localStorage.setItem("savedProperties", JSON.stringify(updatedSaved));
+
+    const updatedData = savedPropertiesData.filter(
+      (property) => property.id !== propertyId
+    );
     setSavedPropertiesData(updatedData);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0">
-      <Header />
-      
       {/* Page Header */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-8">
         <div className="max-w-7xl mx-auto text-center text-white">
@@ -87,7 +92,7 @@ export default function SavedProperties() {
           </p>
         </div>
       </div>
-      
+
       <section className="py-8 md:py-16">
         <div className="max-w-7xl mx-auto px-3 md:px-6">
           {savedPropertiesData.length === 0 ? (
@@ -99,7 +104,8 @@ export default function SavedProperties() {
                 No saved properties yet
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Start browsing properties and save your favorites by clicking the heart icon
+                Start browsing properties and save your favorites by clicking
+                the heart icon
               </p>
               <a
                 href="/properties"
@@ -113,20 +119,21 @@ export default function SavedProperties() {
             <>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
-                  {savedPropertiesData.length} Saved {savedPropertiesData.length === 1 ? 'Property' : 'Properties'}
+                  {savedPropertiesData.length} Saved{" "}
+                  {savedPropertiesData.length === 1 ? "Property" : "Properties"}
                 </h2>
                 <button
                   onClick={() => {
                     setSavedProperties([]);
                     setSavedPropertiesData([]);
-                    localStorage.removeItem('savedProperties');
+                    localStorage.removeItem("savedProperties");
                   }}
                   className="px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
                 >
                   Clear All
                 </button>
               </div>
-              
+
               {/* Desktop Grid */}
               <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {savedPropertiesData.map((property) => (
@@ -141,7 +148,7 @@ export default function SavedProperties() {
                   </div>
                 ))}
               </div>
-              
+
               {/* Mobile Grid */}
               <div className="md:hidden grid grid-cols-2 gap-3">
                 {savedPropertiesData.map((property) => (

@@ -40,8 +40,6 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0">
-      <Header />
-
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-12">
         {/* Profile Header */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 md:p-8 mb-6">
