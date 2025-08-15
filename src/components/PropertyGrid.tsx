@@ -1,10 +1,9 @@
+"use client";
 
-'use client';
-
-import PropertyCard from './PropertyCard';
+import PropertyCard from "./PropertyCard";
 
 interface Property {
-  id: number;
+  _id: string;
   title: string;
   location: string;
   type: string;
@@ -13,6 +12,7 @@ interface Property {
   bathrooms: number;
   area: string;
   image: string;
+  images: string[]; // Optional array of images
   features: string[];
 }
 
@@ -23,19 +23,23 @@ interface PropertyGridProps {
   priceRange?: { min: number; max: number };
 }
 
-export default function PropertyGrid({ 
-  properties, 
-  filteredLocation, 
+export default function PropertyGrid({
+  properties,
+  filteredLocation,
   filteredType,
-  priceRange 
+  priceRange,
 }: PropertyGridProps) {
   // Filter properties based on all criteria
   const filteredProperties = properties.filter((property) => {
-    const locationMatch = filteredLocation === 'All Areas' || property.location === filteredLocation;
-    const typeMatch = filteredType === 'All Types' || property.type === filteredType;
-    const priceMatch = !priceRange || 
+    const locationMatch =
+      filteredLocation === "All Areas" ||
+      property.location === filteredLocation;
+    const typeMatch =
+      filteredType === "All Types" || property.type === filteredType;
+    const priceMatch =
+      !priceRange ||
       (property.rent >= priceRange.min && property.rent <= priceRange.max);
-    
+
     return locationMatch && typeMatch && priceMatch;
   });
 
@@ -44,12 +48,13 @@ export default function PropertyGrid({
       {/* Results Count */}
       <div className="mb-6">
         <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
-          Showing {filteredProperties.length} {filteredProperties.length === 1 ? 'property' : 'properties'}
-          {filteredLocation !== 'All Areas' && ` in ${filteredLocation}`}
-          {filteredType !== 'All Types' && ` • ${filteredType} properties`}
-          {priceRange && (priceRange.min > 0 || priceRange.max < 100000) && 
-            ` • ৳${priceRange.min.toLocaleString()} - ৳${priceRange.max.toLocaleString()}`
-          }
+          Showing {filteredProperties.length}{" "}
+          {filteredProperties.length === 1 ? "property" : "properties"}
+          {filteredLocation !== "All Areas" && ` in ${filteredLocation}`}
+          {filteredType !== "All Types" && ` • ${filteredType} properties`}
+          {priceRange &&
+            (priceRange.min > 0 || priceRange.max < 100000) &&
+            ` • ৳${priceRange.min.toLocaleString()} - ৳${priceRange.max.toLocaleString()}`}
         </p>
       </div>
 
@@ -70,14 +75,18 @@ export default function PropertyGrid({
           {/* Desktop Grid */}
           <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
+              <PropertyCard key={property._id} property={property} />
             ))}
           </div>
-          
+
           {/* Mobile Grid */}
           <div className="md:hidden grid grid-cols-2 gap-3">
             {filteredProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} isMobile={true} />
+              <PropertyCard
+                key={property._id}
+                property={property}
+                isMobile={true}
+              />
             ))}
           </div>
         </>

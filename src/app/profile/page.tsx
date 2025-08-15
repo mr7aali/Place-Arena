@@ -2,9 +2,10 @@
 
 "use client";
 
-import { useState } from "react";
-import Header from "../../components/Header";
+import { useEffect, useState } from "react";
 import MobileBottomNav from "../../components/MobileBottomNav";
+import { usePathname } from "next/navigation";
+import { getUserProfile } from "../actions";
 
 export default function Profile() {
   const [user] = useState({
@@ -37,6 +38,22 @@ export default function Profile() {
         "https://readdy.ai/api/search-image?query=Cozy%20bachelor%20studio%20apartment%20interior%20design&width=300&height=200&seq=my-prop-2&orientation=landscape",
     },
   ]);
+  const [userProfile, setUserProfile] = useState(null);
+  const pathname = usePathname();
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const userData = await getUserProfile();
+      if (!userData) {
+        setUserProfile(null);
+      } else {
+        setUserProfile(userData);
+      }
+    };
+    if (pathname.includes("login") || pathname.includes("signup")) {
+      setUserProfile(null);
+    }
+    fetchUserProfile();
+  }, [pathname]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0">
@@ -59,11 +76,11 @@ export default function Profile() {
               <div className="space-y-2 text-gray-600 dark:text-gray-400">
                 <div className="flex items-center justify-center md:justify-start">
                   <i className="ri-mail-line w-4 h-4 flex items-center justify-center mr-2"></i>
-                  <span className="text-sm">{user.email}</span>
+                  <span className="text-sm">{userProfile?.email}</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start">
                   <i className="ri-phone-line w-4 h-4 flex items-center justify-center mr-2"></i>
-                  <span className="text-sm">{user.phone}</span>
+                  <span className="text-sm">{userProfile?.phoneNumber}</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start">
                   <i className="ri-map-pin-line w-4 h-4 flex items-center justify-center mr-2"></i>
@@ -71,7 +88,14 @@ export default function Profile() {
                 </div>
                 <div className="flex items-center justify-center md:justify-start">
                   <i className="ri-calendar-line w-4 h-4 flex items-center justify-center mr-2"></i>
-                  <span className="text-sm">Joined {user.joinDate}</span>
+
+                  <span className="text-sm">
+                    Joined{" "}
+                    {new Date(userProfile?.createdAt).toLocaleString("en-US", {
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>
                 </div>
               </div>
             </div>

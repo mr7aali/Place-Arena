@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import SearchFilters from "../../components/SearchFilters";
 import PropertyGrid from "../../components/PropertyGrid";
@@ -170,11 +170,20 @@ export default function PropertiesPage() {
   const [filteredLocation, setFilteredLocation] = useState("All Areas");
   const [filteredType, setFilteredType] = useState("All Types");
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
-
+  const [properties, setProperties] = useState([]);
   const handlePriceRangeChange = (min: number, max: number) => {
     setPriceRange({ min, max });
   };
-
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch(
+        "https://place-arena-backend.vercel.app/api/v1/property"
+      );
+      const data = await res.json();
+      setProperties(data);
+    }
+    fetchData();
+  }, []);
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0 flex flex-col">
       {/* Page Header */}
@@ -200,7 +209,7 @@ export default function PropertiesPage() {
       <section className="py-8 md:py-16 flex-1">
         <div className="max-w-7xl mx-auto px-3 md:px-6">
           <PropertyGrid
-            properties={sampleProperties}
+            properties={properties}
             filteredLocation={filteredLocation}
             filteredType={filteredType}
             priceRange={priceRange}

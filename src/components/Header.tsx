@@ -54,16 +54,7 @@ export default function Header() {
     }
     fetchUserProfile();
   }, [pathname]);
-  // useEffect(() => {
-  //   if (pathname === "/login" || pathname === "/signup") {
-  //     const fetchUserProfile = async () => {
-  //       const userData = await getUserProfile();
-  //       setUserProfile(userData);
-  //     };
-  //     fetchUserProfile();
-  //   }
-  // }, [pathname]);
-  console.log(userProfile, Boolean(userProfile));
+
   return (
     <>
       {/* Desktop Header */}

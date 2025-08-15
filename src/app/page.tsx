@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback, useEffect, use } from "react";
-import Header from "../components/Header";
+import { useState, useCallback, useEffect } from "react";
+
 // import HeroSection from '../components/HeroSection';
 import SearchFilters from "../components/SearchFilters";
 import PropertyGrid from "../components/PropertyGrid";
@@ -172,9 +172,20 @@ export default function Home() {
   const [filteredLocation, setFilteredLocation] = useState("All Areas");
   const [filteredType, setFilteredType] = useState("All Types");
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
-
+  const [properties, setProperties] = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
   const handlePriceRangeChange = useCallback((min: number, max: number) => {
     setPriceRange({ min, max });
+  }, []);
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch(
+        "https://place-arena-backend.vercel.app/api/v1/property"
+      );
+      const data = await res.json();
+      setProperties(data);
+    }
+    fetchData();
   }, []);
 
   return (
@@ -211,9 +222,8 @@ export default function Home() {
               comfort and lifestyle needs.
             </p>
           </div>
-
           <PropertyGrid
-            properties={sampleProperties}
+            properties={properties}
             filteredLocation={filteredLocation}
             filteredType={filteredType}
             priceRange={priceRange}

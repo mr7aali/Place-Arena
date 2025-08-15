@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface Property {
-  id: number;
+  _id: string;
   title: string;
   location: string;
   type: string;
@@ -15,6 +15,7 @@ interface Property {
   bathrooms: number;
   area: string;
   image: string;
+  images: string[]; // Optional array of images
   features: string[];
 }
 
@@ -34,9 +35,9 @@ export default function PropertyCard({
     const savedProperties = localStorage.getItem("savedProperties");
     if (savedProperties) {
       const savedIds = JSON.parse(savedProperties);
-      setIsSaved(savedIds.includes(property.id));
+      setIsSaved(savedIds.includes(property._id));
     }
-  }, [property.id]);
+  }, [property._id]);
 
   const toggleSave = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -46,9 +47,9 @@ export default function PropertyCard({
     let savedIds = savedProperties ? JSON.parse(savedProperties) : [];
 
     if (isSaved) {
-      savedIds = savedIds.filter((id: number) => id !== property.id);
+      savedIds = savedIds.filter((id: string) => id !== property._id);
     } else {
-      savedIds.push(property.id);
+      savedIds.push(property._id);
     }
 
     localStorage.setItem("savedProperties", JSON.stringify(savedIds));
@@ -58,7 +59,7 @@ export default function PropertyCard({
   // Generate consistent date based on property ID to avoid hydration mismatch
   const getConsistentDate = () => {
     const baseDate = new Date("2024-01-01");
-    const daysToAdd = (property.id * 7) % 30; // Use property ID for consistency
+    const daysToAdd = (1 * 7) % 30; // Use property ID for consistency
     const targetDate = new Date(
       baseDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000
     );
@@ -123,7 +124,7 @@ export default function PropertyCard({
             <span className="text-lg font-bold text-purple-600 dark:text-purple-400">
               ৳{(property.rent / 1000).toFixed(0)}k
             </span>
-            <Link href={`/property/${property.id}`}>
+            <Link href={`/property/${property._id}`}>
               <button className="px-2 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 cursor-pointer whitespace-nowrap">
                 View
               </button>
@@ -133,12 +134,17 @@ export default function PropertyCard({
       </div>
     );
   }
-
+  // console.log(property.images[0]);
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
       <div className="relative h-48 overflow-hidden">
         <img
-          src={property.image}
+          // src={property.image}
+          src={
+            Array.isArray(property.images) && property.images.length > 0
+              ? property.images[0]
+              : property.image
+          }
           alt={property.title}
           className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
         />
@@ -215,7 +221,7 @@ export default function PropertyCard({
             </span>
           </div>
 
-          <Link href={`/property/${property.id}`}>
+          <Link href={`/property/${property._id}`}>
             <button className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 cursor-pointer whitespace-nowrap">
               View Details
             </button>

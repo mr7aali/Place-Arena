@@ -7,7 +7,7 @@ import MobileBottomNav from "../../components/MobileBottomNav";
 
 const sampleProperties = [
   {
-    id: 1,
+    _id: "1",
     title: "Office Unit Rent",
     location: "Nirala",
     type: "Office",
@@ -18,9 +18,10 @@ const sampleProperties = [
     image:
       "https://readdy.ai/api/search-image?query=Modern%20luxury%20office%20space%20interior%20with%20spacious%20work%20areas%2C%20contemporary%20furniture%2C%20large%20windows%20with%20natural%20light%2C%20elegant%20conference%20room%20and%20reception%20area%2C%20premium%20finishes%20and%20sophisticated%20design%20elements%2C%20professional%20business%20photography&width=400&height=300&seq=prop-office-1&orientation=landscape",
     features: ["Conference Room", "Parking", "Security", "Generator"],
+    images: [],
   },
   {
-    id: 2,
+    _id: "2",
     title: "Bachelor Apartment",
     location: "Sonadanga",
     type: "Bachelor",
@@ -31,9 +32,10 @@ const sampleProperties = [
     image:
       "https://readdy.ai/api/search-image?query=Cozy%20bachelor%20studio%20apartment%20with%20modern%20minimalist%20design%2C%20compact%20living%20space%20with%20bed%2C%20study%20area%2C%20kitchenette%2C%20warm%20lighting%20and%20contemporary%20furniture%2C%20efficient%20space%20utilization%2C%20professional%20real%20estate%20photography&width=400&height=300&seq=prop-bach-2&orientation=landscape",
     features: ["Furnished", "WiFi", "AC", "Kitchen"],
+    images: [],
   },
   {
-    id: 7,
+    _id: "7",
     title: "Family Apartment",
     location: "Boyra",
     type: "Family",
@@ -44,11 +46,12 @@ const sampleProperties = [
     image:
       "https://readdy.ai/api/search-image?query=Beautiful%20family%20apartment%20with%20spacious%20living%20areas%2C%20modern%20kitchen%2C%20comfortable%20bedrooms%2C%20balcony%20with%20city%20view%2C%20contemporary%20interior%20design%2C%20natural%20lighting%20and%20premium%20finishes&width=400&height=300&seq=prop-fam-7&orientation=landscape",
     features: ["Balcony", "Parking", "Security", "Generator"],
+    images: [],
   },
 ];
 
 export default function SavedProperties() {
-  const [savedProperties, setSavedProperties] = useState<number[]>([]);
+  const [savedProperties, setSavedProperties] = useState<string[]>([]);
   const [savedPropertiesData, setSavedPropertiesData] = useState<
     typeof sampleProperties
   >([]);
@@ -62,19 +65,19 @@ export default function SavedProperties() {
 
       // Filter properties that are saved
       const savedData = sampleProperties.filter((property) =>
-        savedIds.includes(property.id)
+        savedIds.includes(property._id)
       );
       setSavedPropertiesData(savedData);
     }
   }, []);
 
-  const removeSavedProperty = (propertyId: number) => {
+  const removeSavedProperty = (propertyId: string) => {
     const updatedSaved = savedProperties.filter((id) => id !== propertyId);
     setSavedProperties(updatedSaved);
     localStorage.setItem("savedProperties", JSON.stringify(updatedSaved));
 
     const updatedData = savedPropertiesData.filter(
-      (property) => property.id !== propertyId
+      (property) => property._id !== propertyId
     );
     setSavedPropertiesData(updatedData);
   };
@@ -137,10 +140,10 @@ export default function SavedProperties() {
               {/* Desktop Grid */}
               <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {savedPropertiesData.map((property) => (
-                  <div key={property.id} className="relative group">
+                  <div key={property._id} className="relative group">
                     <PropertyCard property={property} />
                     <button
-                      onClick={() => removeSavedProperty(property.id)}
+                      onClick={() => removeSavedProperty(property._id)}
                       className="absolute top-4 right-4 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
                     >
                       <i className="ri-close-line text-sm"></i>
@@ -152,10 +155,10 @@ export default function SavedProperties() {
               {/* Mobile Grid */}
               <div className="md:hidden grid grid-cols-2 gap-3">
                 {savedPropertiesData.map((property) => (
-                  <div key={property.id} className="relative group">
+                  <div key={property._id} className="relative group">
                     <PropertyCard property={property} isMobile={true} />
                     <button
-                      onClick={() => removeSavedProperty(property.id)}
+                      onClick={() => removeSavedProperty(property._id)}
                       className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-colors cursor-pointer"
                     >
                       <i className="ri-close-line text-xs"></i>
