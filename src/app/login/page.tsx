@@ -33,7 +33,22 @@ export default function Login() {
     setSubmitStatus("");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setSubmitStatus(data.error || "Something went wrong");
+        return;
+      }
+      console.log(data, response.ok, "test 51");
       setSubmitStatus("Login successful! Redirecting...");
     } catch (error) {
       setSubmitStatus("Invalid email or password. Please try again.");

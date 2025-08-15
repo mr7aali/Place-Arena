@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, use } from "react";
 import Header from "../components/Header";
 // import HeroSection from '../components/HeroSection';
 import SearchFilters from "../components/SearchFilters";
 import PropertyGrid from "../components/PropertyGrid";
 import MobileBottomNav from "../components/MobileBottomNav";
 import Footer from "../components/Footer";
+import { getUserProfile } from "./actions";
 
 const sampleProperties = [
   {
@@ -171,11 +172,24 @@ export default function Home() {
   const [filteredLocation, setFilteredLocation] = useState("All Areas");
   const [filteredType, setFilteredType] = useState("All Types");
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
-
+  const [userProfile, setUserProfile] = useState(null);
   const handlePriceRangeChange = useCallback((min: number, max: number) => {
     setPriceRange({ min, max });
   }, []);
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const userData = await getUserProfile();
+      if (!userData) {
+        setUserProfile(null);
+        // console.error(userData.error);
+      } else {
+        setUserProfile(userData);
+      }
+    };
+    fetchUserProfile();
+  }, []);
+  console.log(userProfile);
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0 flex flex-col">
       <Header />

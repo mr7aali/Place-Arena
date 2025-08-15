@@ -67,9 +67,7 @@ export default function Signup() {
           phoneNumber: formData.phone,
         }),
       });
-
       const data = await response.json();
-
       if (!response.ok) {
         setSubmitStatus(data.error || "Something went wrong");
         return;
