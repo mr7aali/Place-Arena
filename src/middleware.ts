@@ -1,50 +1,29 @@
-import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-async function verifyJWT(token: string, secret: string) {
-  const encoder = new TextEncoder();
-  return await jwtVerify(token, encoder.encode(secret));
-}
-export async function middleware(req: NextRequest) {
-  const accessToken = req.cookies.get("accessToken")?.value;
-  if (!accessToken) {
-    return NextResponse.redirect(new URL("/login", req.url));
+export function middleware(request: NextRequest) {
+  const accessToken = request.cookies.get("accessToken")?.value;
+  const refreshToken = request.cookies.get("refreshToken")?.value;
+
+  // If either token is missing, redirect to login
+  if (!accessToken || !refreshToken) {
+    // Optional: delete cookies here (server-side)
+    const response = NextResponse.redirect(new URL("/login", request.url));
+    response.cookies.delete("accessToken");
+    response.cookies.delete("refreshToken");
+    return response;
   }
-  try {
-    await verifyJWT(accessToken, process.env.JWT_ACCESS_SECRET!);
-    return NextResponse.next();
-  } catch (err) {
-    console.log("Access token expired or invalid, trying refresh...", err);
 
-    try {
-      const refreshRes = await fetch(
-        `${process.env.BACKEND_URL}/api/v1/auth/refresh`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      if (!refreshRes.ok) throw new Error("Refresh failed");
-      const data = await refreshRes.json();
-      const response = NextResponse.next();
-      response.cookies.set("accessToken", data.accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-        maxAge: 60 * 15,
-      });
-
-      return response;
-    } catch (refreshErr) {
-      console.log("Refresh token failed:", refreshErr);
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-  }
+  // If both tokens exist, continue to the requested page
+  return NextResponse.next();
 }
+
+// Protect specific routes
 export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*", "/add-property"],
+  matcher: [
+    "/profile",
+    "/add-property",
+    // "/saved",
+    // "/properties/:path*", // example of protecting a sub-path
+  ],
 };

@@ -36,7 +36,7 @@ export async function getUserProfile() {
       );
 
       const accesTokenResponse = await refreshtokenRes.json();
-
+      console.log("Access token by refresh token");
       if (!!accesTokenResponse.accessToken) {
         cookieStore.set({
           name: "accessToken",
@@ -54,3 +54,9 @@ export async function getUserProfile() {
     console.error("Network error:", err);
   }
 }
+
+export const logOutUser = async () => {
+  const cookieStore = await cookies();
+  cookieStore.delete("accessToken");
+  cookieStore.delete("refreshToken");
+};
