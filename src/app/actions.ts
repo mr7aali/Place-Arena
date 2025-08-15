@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 export async function getUserProfile() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
+  const refreshToken = cookieStore.get("refreshToken")?.value;
 
   if (!accessToken) {
     return null;
@@ -19,19 +20,24 @@ export async function getUserProfile() {
       credentials: "include",
     });
 
-    const data = await res.json();
-    if (data.success) {
-      return data?.data;
+    const profileData = await res.json();
+    if (profileData.success) {
+      return profileData?.data;
     } else {
-      // cookieStore.delete("accessToken");
+      console.error("Failed to fetch profile:", profileData.message);
+      cookieStore.delete("accessToken");
       const refreshtokenRes = await fetch(
         `${process.env.BACKEND_URL}/api/v1/auth/refresh`,
-        { credentials: "include" }
+        {
+          method: "POST",
+          body: JSON.stringify({ refresh_token: refreshToken }),
+          headers: { "Content-Type": "application/json" },
+        }
       );
 
       const accesTokenResponse = await refreshtokenRes.json();
       console.log(accesTokenResponse);
-      if (accesTokenResponse.success) {
+      if (!!accesTokenResponse.accessToken) {
         cookieStore.set({
           name: "accessToken",
           value: accesTokenResponse.accessToken,
@@ -41,15 +47,10 @@ export async function getUserProfile() {
         });
         return getUserProfile(); // Retry fetching profile with new token
       } else {
-        //i want o redirect to login page
-        // return NextResponse.redirect(
-        //   new URL("/login", "http://localhost:3000/")
-        // );
+        cookieStore.delete("refreshToken");
       }
     }
   } catch (err) {
     console.error("Network error:", err);
-    // cookieStore.delete("accessToken");
-    // return NextResponse.redirect(new URL("/login", "http://localhost:3000/"));
   }
 }

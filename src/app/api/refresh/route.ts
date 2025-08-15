@@ -1,0 +1,17 @@
+import { type NextRequest, NextResponse } from "next/server";
+
+export async function GET(request: NextRequest) {
+  try {
+    const apiResponse = await fetch(
+      "http://localhost:5000/api/v1/auth/refresh",
+      {
+        method: "GET",
+      }
+    );
+    const responseData = await apiResponse.json();
+
+    return NextResponse.json(responseData, { status: apiResponse.status });
+  } catch (error) {
+    console.error("Signup error:", error);
+  }
+}
