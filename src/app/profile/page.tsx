@@ -7,6 +7,81 @@ import MobileBottomNav from "../../components/MobileBottomNav";
 import { usePathname } from "next/navigation";
 import { getUserProfile } from "../actions";
 
+function ProfileSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-12">
+        {/* Profile Header Skeleton */}
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 md:p-8 mb-6">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-r from-purple-200 to-blue-200 dark:from-purple-800 dark:to-blue-800 animate-pulse"></div>
+
+            <div className="flex-1 text-center md:text-left">
+              <div className="h-8 bg-gradient-to-r from-purple-200 to-blue-200 dark:from-purple-800 dark:to-blue-800 rounded-lg mb-4 animate-pulse"></div>
+              <div className="space-y-3">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+              </div>
+            </div>
+
+            <div className="px-6 py-2 bg-gradient-to-r from-purple-200 to-blue-200 dark:from-purple-800 dark:to-blue-800 rounded-lg animate-pulse h-10 w-32"></div>
+          </div>
+        </div>
+
+        {/* Quick Stats Skeleton */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 text-center"
+            >
+              <div className="h-8 bg-gradient-to-r from-purple-200 to-blue-200 dark:from-purple-800 dark:to-blue-800 rounded mb-2 animate-pulse"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* My Properties Skeleton */}
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 md:p-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="h-8 w-48 bg-gradient-to-r from-purple-200 to-blue-200 dark:from-purple-800 dark:to-blue-800 rounded-lg animate-pulse"></div>
+            <div className="h-10 w-24 bg-purple-100 dark:bg-purple-900/20 rounded-lg animate-pulse"></div>
+          </div>
+
+          <div className="space-y-4">
+            {[...Array(2)].map((_, i) => (
+              <div
+                key={i}
+                className="flex flex-col md:flex-row gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl"
+              >
+                <div className="w-full md:w-32 h-32 md:h-24 rounded-lg bg-gradient-to-r from-purple-200 to-blue-200 dark:from-purple-800 dark:to-blue-800 animate-pulse"></div>
+
+                <div className="flex-1">
+                  <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-3 animate-pulse"></div>
+                  <div className="space-y-2">
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                    <div className="h-6 w-20 bg-green-200 dark:bg-green-800 rounded-full animate-pulse"></div>
+                  </div>
+                </div>
+
+                <div className="flex md:flex-col gap-2">
+                  <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                  <div className="h-8 w-16 bg-blue-200 dark:bg-blue-800 rounded-lg animate-pulse"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <MobileBottomNav />
+    </div>
+  );
+}
+
 export default function Profile() {
   const [user] = useState({
     name: "Ahmed Rahman",
@@ -45,21 +120,32 @@ export default function Profile() {
     // add other fields as needed
   };
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
+
   useEffect(() => {
     const fetchUserProfile = async () => {
+      setIsLoading(true);
       const userData = await getUserProfile();
       if (!userData) {
         setUserProfile(null);
       } else {
         setUserProfile(userData);
       }
+      setIsLoading(false);
     };
     if (pathname.includes("login") || pathname.includes("signup")) {
       setUserProfile(null);
+      setIsLoading(false);
+    } else {
+      fetchUserProfile();
     }
-    fetchUserProfile();
   }, [pathname]);
+
+  if (isLoading) {
+    return <ProfileSkeleton />;
+  }
+
   if (userProfile === null) {
     return;
   } else {
@@ -71,7 +157,7 @@ export default function Profile() {
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
                 <img
-                  src={user.avatar}
+                  src={user.avatar || "/placeholder.svg"}
                   alt="Profile"
                   className="w-full h-full object-cover object-top"
                 />
@@ -172,7 +258,7 @@ export default function Profile() {
                 >
                   <div className="w-full md:w-32 h-32 md:h-24 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
                     <img
-                      src={property.image}
+                      src={property.image || "/placeholder.svg"}
                       alt={property.title}
                       className="w-full h-full object-cover object-top"
                     />
