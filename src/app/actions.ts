@@ -36,7 +36,7 @@ export async function getUserProfile() {
       );
 
       const accesTokenResponse = await refreshtokenRes.json();
-      console.log("Access token by refresh token");
+
       if (!!accesTokenResponse.accessToken) {
         cookieStore.set({
           name: "accessToken",

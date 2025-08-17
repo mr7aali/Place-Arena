@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
       "images.pexels.com",
       "example.com",
       "readdy.ai",
+      "res.cloudinary.com",
     ],
   },
 };

@@ -2,13 +2,32 @@
 
 "use client";
 
+import type React from "react";
+
 import { useState } from "react";
 
 import MobileBottomNav from "../../components/MobileBottomNav";
-import { khulnaAreas, propertyTypes } from "@/data";
+import { availableFeatures, khulnaAreas, propertyTypes } from "@/data";
+import { uploadImageToCloudinary } from "../lib/cloudinary";
+
+interface FormData {
+  title: string;
+  location: string;
+  type: string;
+  rent: string;
+  rooms: string;
+  bathrooms: string;
+  area: string;
+  description: string;
+  features: string[];
+  ownerName: string;
+  ownerPhone: string;
+  ownerEmail: string;
+  images: string[]; // Changed from File[] to string[] for URLs
+}
 
 export default function AddProperty() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     location: "",
     type: "",
@@ -17,37 +36,18 @@ export default function AddProperty() {
     bathrooms: "",
     area: "",
     description: "",
-    features: [] as string[],
+    features: [],
     ownerName: "",
     ownerPhone: "",
     ownerEmail: "",
-    images: [] as File[],
+    images: [], // Example images for initial state
   });
-
+  console.log(formData.images);
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
   const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState("");
-
-  const availableFeatures = [
-    "Parking",
-    "Balcony",
-    "Garden",
-    "Security",
-    "Generator",
-    "Lift/Elevator",
-    "WiFi",
-    "AC",
-    "Furnished",
-    "Semi-Furnished",
-    "Kitchen",
-    "Rooftop",
-    "Storage",
-    "Gym Access",
-    "Swimming Pool",
-    "CCTV",
-    "Intercom",
-  ];
+  const [uploadingImages, setUploadingImages] = useState<boolean[]>([]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -78,7 +78,7 @@ export default function AddProperty() {
     }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const totalImages = formData.images.length + files.length;
 
@@ -87,10 +87,64 @@ export default function AddProperty() {
       return;
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      images: [...prev.images, ...files.slice(0, 15 - prev.images.length)],
-    }));
+    // Initialize uploading states
+    const newUploadingStates = new Array(files.length).fill(true);
+    setUploadingImages((prev) => [...prev, ...newUploadingStates]);
+
+    try {
+      // Upload each file to Cloudinary
+      const uploadPromises = files.map(async (file, index) => {
+        try {
+          const imageUrl = await uploadImageToCloudinary(file);
+          console.log("image uploaded", imageUrl);
+          // Update uploading state for this specific image
+          setUploadingImages((prev) => {
+            const newStates = [...prev];
+            newStates[formData.images.length + index] = false;
+            return newStates;
+          });
+
+          return imageUrl;
+        } catch (error) {
+          console.error(`Failed to upload image ${index + 1}:`, error);
+
+          // Update uploading state for failed upload
+          setUploadingImages((prev) => {
+            const newStates = [...prev];
+            newStates[formData.images.length + index] = false;
+            return newStates;
+          });
+
+          return null;
+        }
+      });
+
+      const uploadedUrls = await Promise.all(uploadPromises);
+      const successfulUploads = uploadedUrls.filter(
+        (url) => url !== null
+      ) as string[];
+
+      if (successfulUploads.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          images: [...prev.images, ...successfulUploads],
+        }));
+      }
+
+      if (successfulUploads.length < files.length) {
+        alert(
+          `${
+            files.length - successfulUploads.length
+          } image(s) failed to upload. Please try again.`
+        );
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      alert("Failed to upload images. Please try again.");
+    }
+
+    // Clear the input
+    e.target.value = "";
   };
 
   const removeImage = (index: number) => {
@@ -98,6 +152,7 @@ export default function AddProperty() {
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
+    setUploadingImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -116,32 +171,61 @@ export default function AddProperty() {
       return;
     }
 
+    if (formData.images.length === 0) {
+      setSubmitStatus("Please upload at least one property image");
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus("");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Prepare data in the format expected by backend
+      const propertyData = {
+        title: formData.title,
+        location: formData.location,
+        type: formData.type,
+        rent: formData.rent,
+        rooms: formData.rooms,
+        bathrooms: formData.bathrooms || "1",
+        area: formData.area || "",
+        description: formData.description,
+        features: formData.features,
+        ownerName: formData.ownerName,
+        ownerPhone: formData.ownerPhone,
+        ownerEmail: formData.ownerEmail,
+        images: formData.images,
+      };
+      console.log(propertyData, "This is my property data");
+      const response = await fetch("/api/property", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ data: propertyData }),
+      });
+      console.log(response);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP error! status: ${response.status}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("Property created successfully:", result);
+
       setSubmitStatus(
         "Property listed successfully! It will be reviewed and published soon."
       );
-      setFormData({
-        title: "",
-        location: "",
-        type: "",
-        rent: "",
-        rooms: "",
-        bathrooms: "",
-        area: "",
-        description: "",
-        features: [],
-        ownerName: "",
-        ownerPhone: "",
-        ownerEmail: "",
-        images: [],
-      });
     } catch (error) {
-      setSubmitStatus("Error submitting property. Please try again.");
-      console.log(error);
+      console.error("Error submitting property:", error);
+      setSubmitStatus(
+        `Error submitting property: ${
+          error instanceof Error ? error.message : "Please try again."
+        }`
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -169,7 +253,7 @@ export default function AddProperty() {
             {/* Property Photos Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Property Photos (Up to 15 photos)
+                Property Photos (Up to 15 photos) *
               </label>
               <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
                 <input
@@ -200,14 +284,19 @@ export default function AddProperty() {
               {formData.images.length > 0 && (
                 <div className="mt-4">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {formData.images.map((image, index) => (
+                    {formData.images.map((imageUrl, index) => (
                       <div key={index} className="relative group">
                         <div className="w-full h-24 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
                           <img
-                            src={URL.createObjectURL(image)}
-                            alt={`Preview ${index + 1}`}
+                            src={imageUrl || "/placeholder.svg"}
+                            alt={`Property ${index + 1}`}
                             className="w-full h-full object-cover"
                           />
+                          {uploadingImages[index] && (
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                              <i className="ri-loader-line animate-spin text-white text-xl"></i>
+                            </div>
+                          )}
                         </div>
                         <button
                           type="button"
@@ -492,9 +581,11 @@ export default function AddProperty() {
             <div className="pt-4">
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={
+                  isSubmitting || uploadingImages.some((uploading) => uploading)
+                }
                 className={`w-full py-4 rounded-lg font-semibold transition-all duration-300 cursor-pointer whitespace-nowrap ${
-                  isSubmitting
+                  isSubmitting || uploadingImages.some((uploading) => uploading)
                     ? "bg-gray-400 text-gray-200 cursor-not-allowed"
                     : "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
                 }`}
@@ -503,6 +594,11 @@ export default function AddProperty() {
                   <div className="flex items-center justify-center">
                     <i className="ri-loader-line animate-spin mr-2"></i>
                     Submitting Property...
+                  </div>
+                ) : uploadingImages.some((uploading) => uploading) ? (
+                  <div className="flex items-center justify-center">
+                    <i className="ri-upload-line animate-pulse mr-2"></i>
+                    Uploading Images...
                   </div>
                 ) : (
                   "List Property"

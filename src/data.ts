@@ -19,3 +19,22 @@ export const propertyTypes = [
   "Studio",
   "Apartment",
 ];
+export const availableFeatures = [
+  "Parking",
+  "Balcony",
+  "Garden",
+  "Security",
+  "Generator",
+  "Lift/Elevator",
+  "WiFi",
+  "AC",
+  "Furnished",
+  "Semi-Furnished",
+  "Kitchen",
+  "Rooftop",
+  "Storage",
+  "Gym Access",
+  "Swimming Pool",
+  "CCTV",
+  "Intercom",
+];
