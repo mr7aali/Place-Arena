@@ -60,3 +60,9 @@ export const logOutUser = async () => {
   cookieStore.delete("accessToken");
   cookieStore.delete("refreshToken");
 };
+
+export const getHomePageProperties = async () => {
+  const res = await fetch(`${process.env.BACKEND_URL}/api/v1/property`);
+  const data = await res.json();
+  return data;
+};

@@ -6,6 +6,7 @@ import SearchFilters from "../components/SearchFilters";
 import MobileBottomNav from "../components/MobileBottomNav";
 import dynamic from "next/dynamic";
 import Loading from "./loading";
+import { getHomePageProperties } from "./actions";
 const PropertyGrid = dynamic(() => import("../components/PropertyGrid"), {
   ssr: false,
   loading: () => <Loading />,
@@ -22,10 +23,7 @@ export default function Home() {
   }, []);
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch(
-        "https://place-arena-backend.vercel.app/api/v1/property"
-      );
-      const data = await res.json();
+      const data = await getHomePageProperties();
       setProperties(data);
     }
     fetchData();

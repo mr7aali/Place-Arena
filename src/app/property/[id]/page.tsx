@@ -7,12 +7,9 @@ export default async function PropertyPage({
 }) {
   const { id } = await params;
   console.log(id);
-  const res = await fetch(
-    `https://place-arena-backend.vercel.app/api/v1/property/${id}`,
-    {
-      next: { revalidate: 60 },
-    }
-  );
+  const res = await fetch(`${process.env.BACKEND_URL}/api/v1/property/${id}`, {
+    next: { revalidate: 60 },
+  });
   if (!res.ok) {
     throw new Error("Failed to fetch property data");
   }
