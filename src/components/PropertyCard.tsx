@@ -1,9 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
-
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Property {
   _id: string;
@@ -73,7 +72,8 @@ export default function PropertyCard({
     return (
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
         <div className="relative h-32 overflow-hidden">
-          <img
+          <Image
+            fill
             src={property.image}
             alt={property.title}
             className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
@@ -138,7 +138,9 @@ export default function PropertyCard({
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
       <div className="relative h-48 overflow-hidden">
-        <img
+        <Image
+          fill
+          // src={property.images[0]} --- IGNORE ---
           // src={property.image}
           src={
             Array.isArray(property.images) && property.images.length > 0

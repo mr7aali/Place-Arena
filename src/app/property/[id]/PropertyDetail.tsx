@@ -1,66 +1,33 @@
-/* eslint-disable @next/next/no-img-element */
-
 "use client";
 
 import { useState } from "react";
-import Header from "../../../components/Header";
+
 import MobileBottomNav from "../../../components/MobileBottomNav";
+import Image from "next/image";
 
-const sampleProperties = [
-  {
-    id: 1,
-    title: "Office Unit Rent",
-    location: "Nirala",
-    type: "Office",
-    rent: 25000,
-    rooms: 3,
-    bathrooms: 2,
-    area: "1200 sq ft",
-    images: [
-      "https://readdy.ai/api/search-image?query=Modern%20luxury%20office%20space%20interior%20with%20spacious%20work%20areas%2C%20contemporary%20furniture%2C%20large%20windows%20with%20natural%20light%2C%20elegant%20conference%20room%20and%20reception%20area%2C%20premium%20finishes%20and%20sophisticated%20design%20elements%2C%20professional%20business%20photography&width=800&height=600&seq=prop-office-1-main&orientation=landscape",
-      "https://readdy.ai/api/search-image?query=Professional%20office%20reception%20area%20with%20modern%20furniture%2C%20clean%20design%2C%20excellent%20lighting%20and%20contemporary%20decor&width=800&height=600&seq=prop-office-1-2&orientation=landscape",
-      "https://readdy.ai/api/search-image?query=Office%20conference%20room%20with%20glass%20walls%2C%20modern%20meeting%20table%2C%20comfortable%20chairs%20and%20professional%20setup&width=800&height=600&seq=prop-office-1-3&orientation=landscape",
-    ],
-    features: ["Conference Room", "Parking", "Security", "Generator"],
-    description:
-      "Premium office space in the heart of Nirala. Features modern amenities, excellent natural lighting, and professional environment perfect for your business needs.",
+export default function PropertyDetail({
+  property,
+}: {
+  property: {
+    _id: string;
+    title: string;
+    location: string;
+    type: string;
+    rent: string;
+    rooms: string;
+    bathrooms: string;
+    area: string;
+    images: string[];
+    features: string[];
+    description: string;
     owner: {
-      name: "Mohammad Ali",
-      phone: "+880 1712-123456",
-      email: "ali.business@email.com",
-    },
-  },
-  {
-    id: 2,
-    title: "Bachelor Apartment",
-    location: "Sonadanga",
-    type: "Bachelor",
-    rent: 12000,
-    rooms: 1,
-    bathrooms: 1,
-    area: "600 sq ft",
-    images: [
-      "https://readdy.ai/api/search-image?query=Cozy%20bachelor%20studio%20apartment%20with%20modern%20minimalist%20design%2C%20compact%20living%20space%20with%20bed%2C%20study%20area%2C%20kitchenette%2C%20warm%20lighting%20and%20contemporary%20furniture%2C%20efficient%20space%20utilization%2C%20professional%20real%20estate%20photography&width=800&height=600&seq=prop-bach-2-main&orientation=landscape",
-      "https://readdy.ai/api/search-image?query=Bachelor%20apartment%20bedroom%20with%20comfortable%20bed%2C%20study%20desk%2C%20wardrobe%20and%20modern%20interior%20design&width=800&height=600&seq=prop-bach-2-2&orientation=landscape",
-      "https://readdy.ai/api/search-image?query=Compact%20kitchenette%20in%20bachelor%20apartment%20with%20modern%20appliances%20and%20efficient%20storage&width=800&height=600&seq=prop-bach-2-3&orientation=landscape",
-    ],
-    features: ["Furnished", "WiFi", "AC", "Kitchen"],
-    description:
-      "Perfect bachelor apartment for working professionals. Fully furnished with modern amenities and excellent connectivity.",
-    owner: {
-      name: "Fatima Rahman",
-      phone: "+880 1856-789123",
-      email: "fatima.rental@email.com",
-    },
-  },
-];
-
-interface PropertyDetailProps {
-  propertyId: string;
-}
-
-export default function PropertyDetail({ propertyId }: PropertyDetailProps) {
-  const property = sampleProperties.find((p) => p.id === parseInt(propertyId));
+      name: string;
+      phone: string;
+      email?: string;
+    };
+  };
+}) {
+  // const property = sampleProperties.find((p) => p.id === parseInt(propertyId));
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showContactModal, setShowContactModal] = useState(false);
 
@@ -92,7 +59,7 @@ export default function PropertyDetail({ propertyId }: PropertyDetailProps) {
 
   const getConsistentDate = () => {
     const baseDate = new Date("2024-01-01");
-    const daysToAdd = (property.id * 7) % 30;
+    const daysToAdd = 234; // Example: 234 days from base date
     const targetDate = new Date(
       baseDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000
     );
@@ -109,9 +76,10 @@ export default function PropertyDetail({ propertyId }: PropertyDetailProps) {
         {/* Property Images Gallery */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden mb-6">
           <div className="relative h-64 md:h-96">
-            <img
+            <Image
               src={property.images[currentImageIndex]}
               alt={property.title}
+              fill
               className="w-full h-full object-cover object-top"
             />
 
@@ -274,16 +242,16 @@ export default function PropertyDetail({ propertyId }: PropertyDetailProps) {
               <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
                 <div className="flex items-center">
                   <i className="ri-user-line w-4 h-4 flex items-center justify-center mr-2"></i>
-                  <span>Owner: {property.owner.name}</span>
+                  <span>Owner: property?.owner?.name</span>
                 </div>
                 <div className="flex items-center">
                   <i className="ri-phone-line w-4 h-4 flex items-center justify-center mr-2"></i>
-                  <span>{property.owner.phone}</span>
+                  <span>{property?.owner?.phone}</span>
                 </div>
-                {property.owner.email && (
+                {property?.owner?.email && (
                   <div className="flex items-center">
                     <i className="ri-mail-line w-4 h-4 flex items-center justify-center mr-2"></i>
-                    <span>{property.owner.email}</span>
+                    <span>property?.owner?.email</span>
                   </div>
                 )}
               </div>
@@ -314,7 +282,7 @@ export default function PropertyDetail({ propertyId }: PropertyDetailProps) {
                   <i className="ri-user-line text-white text-2xl"></i>
                 </div>
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {property.owner.name}
+                  property?.owner?.name
                 </h4>
                 <p className="text-gray-600 dark:text-gray-400">
                   Property Owner

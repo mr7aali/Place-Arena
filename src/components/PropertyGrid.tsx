@@ -44,7 +44,7 @@ export default function PropertyGrid({
   });
 
   return (
-    <>
+    <div>
       {/* Results Count */}
       <div className="mb-6">
         <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
@@ -91,6 +91,6 @@ export default function PropertyGrid({
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }
