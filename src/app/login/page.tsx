@@ -49,7 +49,7 @@ export default function Login() {
         setSubmitStatus(data.error || "Something went wrong");
         return;
       }
-      route.push("/");
+      route.back();
       setSubmitStatus("Login successful! Redirecting...");
     } catch (error) {
       setSubmitStatus("Invalid email or password. Please try again.");

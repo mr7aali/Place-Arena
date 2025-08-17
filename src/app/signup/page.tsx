@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-
     password: "",
     confirmPassword: "",
     userType: "tenant",
@@ -88,7 +89,7 @@ export default function Signup() {
       setSubmitStatus(
         "Account created successfully! Please check your email for verification."
       );
-
+      router.push("/profile");
       // Reset form on success
       setFormData({
         fullName: "",
@@ -98,6 +99,7 @@ export default function Signup() {
         confirmPassword: "",
         userType: "tenant",
       });
+      router.push("/login"); // Redirect to login page after successful signup
     } catch (error) {
       console.error("Signup error:", error);
       setSubmitStatus(
