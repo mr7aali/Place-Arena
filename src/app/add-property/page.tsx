@@ -1,33 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 
 "use client";
 
 import { useState } from "react";
-import Header from "../../components/Header";
+
 import MobileBottomNav from "../../components/MobileBottomNav";
-
-const khulnaAreas = [
-  "Nirala",
-  "Sonadanga",
-  "Khan Jahan Ali Road",
-  "Gollamari",
-  "Doulatpur",
-  "Khalishpur",
-  "Boyra",
-  "Phultala",
-  "Rupsha",
-  "Digholia",
-];
-
-const propertyTypes = [
-  "Bachelor",
-  "Family",
-  "Office",
-  "Shop",
-  "Studio",
-  "Apartment",
-];
+import { khulnaAreas, propertyTypes } from "@/data";
 
 export default function AddProperty() {
   const [formData, setFormData] = useState({
@@ -163,6 +141,7 @@ export default function AddProperty() {
       });
     } catch (error) {
       setSubmitStatus("Error submitting property. Please try again.");
+      console.log(error);
     } finally {
       setIsSubmitting(false);
     }

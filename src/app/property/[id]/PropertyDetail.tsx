@@ -10,6 +10,7 @@ export default function PropertyDetail({
 }: {
   property: {
     _id: string;
+
     title: string;
     location: string;
     type: string;
@@ -17,14 +18,14 @@ export default function PropertyDetail({
     rooms: string;
     bathrooms: string;
     area: string;
-    images: string[];
-    features: string[];
     description: string;
-    owner: {
-      name: string;
-      phone: string;
-      email?: string;
-    };
+    features: string[];
+    ownerName: string;
+    ownerPhone: string;
+    ownerEmail: string;
+    images: string[];
+    createdAt: string;
+    updatedAt: string;
   };
 }) {
   // const property = sampleProperties.find((p) => p.id === parseInt(propertyId));
@@ -128,7 +129,8 @@ export default function PropertyDetail({
                         : "border-transparent hover:border-purple-300"
                     }`}
                   >
-                    <img
+                    <Image
+                      fill
                       src={image}
                       alt={`${property.title} ${index + 1}`}
                       className="w-full h-full object-cover object-top"
@@ -246,12 +248,12 @@ export default function PropertyDetail({
                 </div>
                 <div className="flex items-center">
                   <i className="ri-phone-line w-4 h-4 flex items-center justify-center mr-2"></i>
-                  <span>{property?.owner?.phone}</span>
+                  <span>{property?.ownerPhone}</span>
                 </div>
-                {property?.owner?.email && (
+                {property?.ownerEmail && (
                   <div className="flex items-center">
                     <i className="ri-mail-line w-4 h-4 flex items-center justify-center mr-2"></i>
-                    <span>property?.owner?.email</span>
+                    <span>{property?.ownerEmail}</span>
                   </div>
                 )}
               </div>
@@ -282,7 +284,7 @@ export default function PropertyDetail({
                   <i className="ri-user-line text-white text-2xl"></i>
                 </div>
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  property?.owner?.name
+                  {property?.ownerName}
                 </h4>
                 <p className="text-gray-600 dark:text-gray-400">
                   Property Owner
@@ -290,16 +292,16 @@ export default function PropertyDetail({
               </div>
 
               <a
-                href={`tel:${property.owner.phone}`}
+                href={`tel:${property.ownerPhone}`}
                 className="flex items-center justify-center w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
               >
                 <i className="ri-phone-line w-4 h-4 flex items-center justify-center mr-2"></i>
-                Call {property.owner.phone}
+                Call {property.ownerName} at {property.ownerPhone}
               </a>
 
-              {property.owner.email && (
+              {property.ownerEmail && (
                 <a
-                  href={`mailto:${property.owner.email}`}
+                  href={`mailto:${property.ownerEmail}`}
                   className="flex items-center justify-center w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
                 >
                   <i className="ri-mail-line w-4 h-4 flex items-center justify-center mr-2"></i>
@@ -308,7 +310,7 @@ export default function PropertyDetail({
               )}
 
               <a
-                href={`sms:${property.owner.phone}?body=Hi, I'm interested in your property "${property.title}" in ${property.location}.`}
+                href={`sms:${property.ownerPhone}?body=Hi, I'm interested in your property "${property.title}" in ${property.location}.`}
                 className="flex items-center justify-center w-full py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors cursor-pointer"
               >
                 <i className="ri-message-line w-4 h-4 flex items-center justify-center mr-2"></i>
