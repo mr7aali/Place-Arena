@@ -4,7 +4,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { data } = body;
-    console.log(body.data, "This is my data");
+
     const apiResponse = await fetch(
       `${process.env.BACKEND_URL}/api/v1/property`,
       {
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       }
     );
     const responseData = await apiResponse.json();
-    console.log(responseData);
+    console.log("API Response:", responseData);
     if (responseData.success) {
       return NextResponse.json(responseData.data);
     }

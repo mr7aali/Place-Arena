@@ -9,6 +9,8 @@ import { useState } from "react";
 import MobileBottomNav from "../../components/MobileBottomNav";
 import { availableFeatures, khulnaAreas, propertyTypes } from "@/data";
 import { uploadImageToCloudinary } from "../lib/cloudinary";
+import { get } from "http";
+import { getUserProfile } from "../actions";
 
 interface FormData {
   title: string;
@@ -20,9 +22,6 @@ interface FormData {
   area: string;
   description: string;
   features: string[];
-  ownerName: string;
-  ownerPhone: string;
-  ownerEmail: string;
   images: string[]; // Changed from File[] to string[] for URLs
 }
 
@@ -37,12 +36,9 @@ export default function AddProperty() {
     area: "",
     description: "",
     features: [],
-    ownerName: "",
-    ownerPhone: "",
-    ownerEmail: "",
     images: [], // Example images for initial state
   });
-  console.log(formData.images);
+
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
   const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -96,7 +92,7 @@ export default function AddProperty() {
       const uploadPromises = files.map(async (file, index) => {
         try {
           const imageUrl = await uploadImageToCloudinary(file);
-          console.log("image uploaded", imageUrl);
+
           // Update uploading state for this specific image
           setUploadingImages((prev) => {
             const newStates = [...prev];
@@ -157,15 +153,12 @@ export default function AddProperty() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (
       !formData.title ||
       !formData.location ||
       !formData.type ||
       !formData.rent ||
-      !formData.rooms ||
-      !formData.ownerName ||
-      !formData.ownerPhone
+      !formData.rooms
     ) {
       setSubmitStatus("Please fill in all required fields");
       return;
@@ -181,6 +174,8 @@ export default function AddProperty() {
 
     try {
       // Prepare data in the format expected by backend
+      const user = await getUserProfile();
+
       const propertyData = {
         title: formData.title,
         location: formData.location,
@@ -191,12 +186,10 @@ export default function AddProperty() {
         area: formData.area || "",
         description: formData.description,
         features: formData.features,
-        ownerName: formData.ownerName,
-        ownerPhone: formData.ownerPhone,
-        ownerEmail: formData.ownerEmail,
         images: formData.images,
+        ownerId: user._id,
       };
-      console.log(propertyData, "This is my property data");
+
       const response = await fetch("/api/property", {
         method: "POST",
         credentials: "include",
@@ -205,7 +198,7 @@ export default function AddProperty() {
         },
         body: JSON.stringify({ data: propertyData }),
       });
-      console.log(response);
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
@@ -213,8 +206,8 @@ export default function AddProperty() {
         );
       }
 
-      const result = await response.json();
-      console.log("Property created successfully:", result);
+      // const result = await response.json();
+      // console.log("Property created successfully:", result);
 
       setSubmitStatus(
         "Property listed successfully! It will be reviewed and published soon."
@@ -512,7 +505,10 @@ export default function AddProperty() {
             </div>
 
             {/* Owner Contact Information */}
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+            {/* <div
+              style={{ border: "1px solid red" }}
+              className="border-t border-gray-200 dark:border-gray-700 pt-6"
+            >
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Contact Information
               </h3>
@@ -562,7 +558,7 @@ export default function AddProperty() {
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* Status Message */}
             {submitStatus && (

@@ -7,14 +7,27 @@ export default function Signup() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    phone: "",
+
     password: "",
     confirmPassword: "",
     userType: "tenant",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState("");
+  const [phone, setPhone] = useState("");
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    if (value.length > 14) {
+      setSubmitStatus("Phone number cannot exceed 14 characters");
+      return;
+    }
+    if (!value.startsWith("+8801")) {
+      // Always ensure phone number starts with +8801
+      value = "+8801" + value.replace(/^\+?8801?/, ""); // remove extra prefix if typed
+    }
 
+    setPhone(value);
+  };
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -60,10 +73,10 @@ export default function Signup() {
         body: JSON.stringify({
           fullName: formData.fullName,
           email: formData.email,
-          phone: formData.phone,
+          phone: phone,
           role: formData.userType,
           password: formData.password,
-          phoneNumber: formData.phone,
+          phoneNumber: phone,
         }),
       });
       const data = await response.json();
@@ -80,7 +93,7 @@ export default function Signup() {
       setFormData({
         fullName: "",
         email: "",
-        phone: "",
+
         password: "",
         confirmPassword: "",
         userType: "tenant",
@@ -154,8 +167,8 @@ export default function Signup() {
                 <input
                   type="tel"
                   name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
+                  value={phone}
+                  onChange={handlePhoneNumberChange}
                   placeholder="+880 1XXX-XXXXXX"
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 />
