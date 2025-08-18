@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import Header from "../../components/Header";
+
 import { useRouter } from "next/navigation";
 
 export default function Login() {

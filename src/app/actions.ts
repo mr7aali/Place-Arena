@@ -24,7 +24,7 @@ export async function getUserProfile() {
     if (profileData.success) {
       return profileData?.data;
     } else {
-      console.error("Failed to fetch profile:", profileData.message);
+      // console.error("Failed to fetch profile:", profileData.message);
       cookieStore.delete("accessToken");
       const refreshtokenRes = await fetch(
         `${process.env.BACKEND_URL}/api/v1/auth/refresh`,
