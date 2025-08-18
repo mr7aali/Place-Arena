@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import MobileBottomNav from "../../components/MobileBottomNav";
 import { usePathname } from "next/navigation";
 import { getUserProfile } from "../actions";
+import Link from "next/link";
 
 function ProfileSkeleton() {
   return (
@@ -245,12 +246,15 @@ export default function Profile() {
               <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                 My Properties
               </h2>
-              <button className="px-4 py-2 bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/40 transition-colors cursor-pointer whitespace-nowrap">
-                Add New
-              </button>
+              <Link href={"/add-property"}>
+                {" "}
+                <button className="px-4 py-2 bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/40 transition-colors cursor-pointer whitespace-nowrap">
+                  Add New
+                </button>
+              </Link>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4" style={{ border: "1px solid red" }}>
               {myProperties.map((property) => (
                 <div
                   key={property.id}

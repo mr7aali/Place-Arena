@@ -213,12 +213,8 @@ export default function AddProperty() {
         "Property listed successfully! It will be reviewed and published soon."
       );
     } catch (error) {
-      console.error("Error submitting property:", error);
-      setSubmitStatus(
-        `Error submitting property: ${
-          error instanceof Error ? error.message : "Please try again."
-        }`
-      );
+      console.error("Please try again : ", error);
+      setSubmitStatus(`Please try again `);
     } finally {
       setIsSubmitting(false);
     }
