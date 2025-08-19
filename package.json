@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@netlify/next": "^1.4.9",
     "@react-google-maps/api": "^2.19.3",
     "@types/jsonwebtoken": "^9.0.10",
     "clsx": "^2.1.1",
