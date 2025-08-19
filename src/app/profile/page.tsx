@@ -84,46 +84,80 @@ function ProfileSkeleton() {
 }
 
 export default function Profile() {
-  const [user] = useState({
-    name: "Ahmed Rahman",
-    email: "ahmed.rahman@email.com",
-    phone: "+880 1712-345678",
-    location: "Khulna, Bangladesh",
-    joinDate: "January 2024",
-    avatar:
-      "https://readdy.ai/api/search-image?query=Professional%20headshot%20of%20a%20young%20Bangladeshi%20man%20in%20business%20attire%2C%20friendly%20smile%2C%20modern%20portrait%20photography%2C%20clean%20background&width=200&height=200&seq=profile-avatar&orientation=squarish",
-  });
+  // const [user] = useState({
+  //   name: "Ahmed Rahman",
+  //   email: "ahmed.rahman@email.com",
+  //   phone: "+880 1712-345678",
+  //   location: "Khulna, Bangladesh",
+  //   joinDate: "January 2024",
+  //   avatar:
+  //     "https://readdy.ai/api/search-image?query=Professional%20headshot%20of%20a%20young%20Bangladeshi%20man%20in%20business%20attire%2C%20friendly%20smile%2C%20modern%20portrait%20photography%2C%20clean%20background&width=200&height=200&seq=profile-avatar&orientation=squarish",
+  // });
 
-  const [myProperties] = useState([
-    {
-      id: 1,
-      title: "Modern Family Apartment",
-      location: "Nirala",
-      rent: 25000,
-      status: "Available",
-      image:
-        "https://readdy.ai/api/search-image?query=Modern%20family%20apartment%20living%20room%20with%20contemporary%20furniture%20and%20decor&width=300&height=200&seq=my-prop-1&orientation=landscape",
-    },
-    {
-      id: 2,
-      title: "Bachelor Studio",
-      location: "Sonadanga",
-      rent: 15000,
-      status: "Rented",
-      image:
-        "https://readdy.ai/api/search-image?query=Cozy%20bachelor%20studio%20apartment%20interior%20design&width=300&height=200&seq=my-prop-2&orientation=landscape",
-    },
-  ]);
+  // const [myProperties] = useState([
+  //   {
+  //     id: 1,
+  //     title: "Modern Family Apartment",
+  //     location: "Nirala",
+  //     rent: 25000,
+  //     status: "Available",
+  //     image:
+  //       "https://readdy.ai/api/search-image?query=Modern%20family%20apartment%20living%20room%20with%20contemporary%20furniture%20and%20decor&width=300&height=200&seq=my-prop-1&orientation=landscape",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Bachelor Studio",
+  //     location: "Sonadanga",
+  //     rent: 15000,
+  //     status: "Rented",
+  //     image:
+  //       "https://readdy.ai/api/search-image?query=Cozy%20bachelor%20studio%20apartment%20interior%20design&width=300&height=200&seq=my-prop-2&orientation=landscape",
+  //   },
+  // ]);
   type UserProfile = {
     email?: string;
     phoneNumber?: string;
     createdAt?: string | Date;
-    // add other fields as needed
+    fullName?: string;
+    _id?: string;
   };
+  type IProperty = {
+    _id: string;
+    title: string;
+    ownerId: string;
+    location: string;
+    type: string;
+    rent: string;
+    rooms: string;
+    bathrooms: string;
+    area: string;
+    description: string;
+    features: string[];
+    images: string[];
+    createdAt: string;
+    updatedAt: string;
+    status: string;
+  }[];
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [myProperties, setMyProperties] = useState<IProperty>([]);
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
-
+  useEffect(() => {
+    const fetchProperties = async () => {
+      if (!userProfile?._id) return;
+      const res = await fetch(
+        `https://place-arena-backend.vercel.app/api/v1/property/owner/${userProfile._id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+      setMyProperties(data);
+    };
+    fetchProperties();
+  }, [userProfile]);
+  console.log(myProperties);
   useEffect(() => {
     const fetchUserProfile = async () => {
       setIsLoading(true);
@@ -142,6 +176,15 @@ export default function Profile() {
       fetchUserProfile();
     }
   }, [pathname]);
+  const avgRent =
+    myProperties.length > 0
+      ? Math.round(
+          myProperties.reduce(
+            (sum, property) => sum + Number(property.rent || 0),
+            0
+          ) / myProperties.length
+        )
+      : 0;
 
   if (isLoading) {
     return <ProfileSkeleton />;
@@ -158,7 +201,9 @@ export default function Profile() {
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
                 <img
-                  src={user.avatar || "/placeholder.svg"}
+                  src={
+                    "https://img.freepik.com/premium-vector/hipster-man-with-beard-glasses-vector-illustration-cartoon-style_1142-64996.jpg?w=360"
+                  }
                   alt="Profile"
                   className="w-full h-full object-cover object-top"
                 />
@@ -166,7 +211,7 @@ export default function Profile() {
 
               <div className="flex-1 text-center md:text-left">
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  {user.name}
+                  {userProfile?.fullName}
                 </h1>
                 <div className="space-y-2 text-gray-600 dark:text-gray-400">
                   <div className="flex items-center justify-center md:justify-start">
@@ -177,10 +222,7 @@ export default function Profile() {
                     <i className="ri-phone-line w-4 h-4 flex items-center justify-center mr-2"></i>
                     <span className="text-sm">{userProfile?.phoneNumber}</span>
                   </div>
-                  <div className="flex items-center justify-center md:justify-start">
-                    <i className="ri-map-pin-line w-4 h-4 flex items-center justify-center mr-2"></i>
-                    <span className="text-sm">{user.location}</span>
-                  </div>
+
                   <div className="flex items-center justify-center md:justify-start">
                     <i className="ri-calendar-line w-4 h-4 flex items-center justify-center mr-2"></i>
 
@@ -208,7 +250,7 @@ export default function Profile() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 text-center">
               <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">
-                2
+                {myProperties.length || 0}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 Properties
@@ -216,7 +258,7 @@ export default function Profile() {
             </div>
             <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 text-center">
               <div className="text-2xl font-bold text-green-600 dark:text-green-400 mb-1">
-                1
+                0
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 Rented
@@ -224,7 +266,7 @@ export default function Profile() {
             </div>
             <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 text-center">
               <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
-                1
+                {myProperties.length || 0}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 Available
@@ -232,7 +274,7 @@ export default function Profile() {
             </div>
             <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 text-center">
               <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-1">
-                15k
+                {avgRent.toLocaleString() || 0}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 Avg Rent
@@ -254,15 +296,15 @@ export default function Profile() {
               </Link>
             </div>
 
-            <div className="space-y-4" style={{ border: "1px solid red" }}>
+            <div className="space-y-4">
               {myProperties.map((property) => (
                 <div
-                  key={property.id}
+                  key={property._id}
                   className="flex flex-col md:flex-row gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition-shadow"
                 >
                   <div className="w-full md:w-32 h-32 md:h-24 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
                     <img
-                      src={property.image || "/placeholder.svg"}
+                      src={property.images[0] || "/placeholder.svg"}
                       alt={property.title}
                       className="w-full h-full object-cover object-top"
                     />
@@ -283,12 +325,12 @@ export default function Profile() {
                       </div>
                       <span
                         className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                          property.status === "Available"
+                          property.status !== "Available"
                             ? "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400"
                             : "bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400"
                         }`}
                       >
-                        {property.status}
+                        Available
                       </span>
                     </div>
                   </div>
