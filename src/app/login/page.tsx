@@ -58,6 +58,7 @@ export default function Login() {
       setSubmitStatus("Login successful! Redirecting...");
     } catch (error) {
       setSubmitStatus("Invalid email or password. Please try again.");
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }

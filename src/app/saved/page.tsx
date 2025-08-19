@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Header from "../../components/Header";
 import PropertyCard from "../../components/PropertyCard";
 import MobileBottomNav from "../../components/MobileBottomNav";
 

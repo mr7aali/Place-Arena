@@ -6,9 +6,6 @@ import SearchFilters from "../../components/SearchFilters";
 import PropertyGrid from "../../components/PropertyGrid";
 import MobileBottomNav from "../../components/MobileBottomNav";
 import Footer from "../../components/Footer";
-import { isLoggedIn } from "@/services/auth.service";
-import { useRouter } from "next/navigation";
-import Loading from "../loading";
 import { getHomePageProperties } from "../actions";
 
 export default function PropertiesPage() {
