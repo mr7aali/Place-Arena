@@ -3,6 +3,7 @@
 
 import { getFromStorage, setTokenToStorage } from "@/utils/setToLocalStorage";
 import { jwtDecode } from "jwt-decode";
+
 // import {} from
 export const storeUserInfo = ({
   accessToken,
@@ -27,8 +28,8 @@ export const getUserInfo = () => {
 
 export const isLoggedIn = () => {
   const accessToken = getFromStorage("accessToken");
-
-  return !!accessToken;
+  const refreshToken = getFromStorage("refreshToken");
+  return !!accessToken || !!refreshToken;
 };
 
 export const removeUserInfo = () => {
@@ -40,4 +41,16 @@ export const getToken = () => {
   const refreshToken = getFromStorage("refreshToken") ?? "";
 
   return { accessToken: accessToken, refreshToken: refreshToken };
+};
+
+export const logOutUser = () => {
+  try {
+    if (typeof window !== "undefined") {
+      ["accessToken", "refreshToken"].forEach((key) =>
+        localStorage.removeItem(key)
+      );
+    }
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
 };

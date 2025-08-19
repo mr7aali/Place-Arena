@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { storeUserInfo } from "@/services/auth.service";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -12,7 +13,7 @@ export default function Login() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState("");
-
+  const router = useRouter();
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -53,7 +54,7 @@ export default function Login() {
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
       });
-      // route.back();
+      router.back();
       setSubmitStatus("Login successful! Redirecting...");
     } catch (error) {
       setSubmitStatus("Invalid email or password. Please try again.");

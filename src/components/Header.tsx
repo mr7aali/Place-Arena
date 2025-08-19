@@ -1,18 +1,19 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
-// import { getUserProfile, logOutUser } from "@/app/actions";
+import { isLoggedIn, logOutUser } from "@/services/auth.service";
 import { usePathname } from "next/navigation";
-import { isLoggedIn } from "@/services/auth.service";
 
 export default function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState(null);
-  const [isLoggidIn, setIsLoggidIn] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const pathname = usePathname();
-  // Initialize dark mode from localStorage or system preference
+  useEffect(() => {
+    const logged = isLoggedIn();
+    setAuthChecked(Boolean(logged));
+  }, [pathname]);
+
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const systemPrefersDark = window.matchMedia(
@@ -43,20 +44,13 @@ export default function Header() {
     }
   };
   // useEffect(() => {
-  //   const fetchUserProfile = async () => {};
-  //   if (pathname.includes("login") || pathname.includes("signup")) {
-  //     setUserProfile(null);
+  //   const result = isLoggedIn();
+  //   if (result) {
+  //     setIsLoggidIn(true);
+  //   } else {
+  //     setIsLoggidIn(false);
   //   }
-  //   fetchUserProfile();
-  // }, [pathname]);
-  useEffect(() => {
-    const result = isLoggedIn();
-    if (result) {
-      setIsLoggidIn(true);
-    } else {
-      setIsLoggidIn(false);
-    }
-  }, []);
+  // }, []);
 
   return (
     <>
@@ -115,7 +109,7 @@ export default function Header() {
                   } text-lg text-gray-600 dark:text-gray-300`}
                 ></i>
               </button>
-              {!Boolean(isLoggidIn) && (
+              {!Boolean(authChecked) && (
                 <>
                   <Link
                     href="/login"
@@ -131,9 +125,9 @@ export default function Header() {
                   </Link>
                 </>
               )}
-              {Boolean(isLoggidIn) && (
+              {Boolean(authChecked) && (
                 <Link
-                  // onClick={logOutUser}
+                  onClick={logOutUser}
                   href="/login"
                   className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 cursor-pointer whitespace-nowrap"
                 >

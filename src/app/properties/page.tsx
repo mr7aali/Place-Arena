@@ -19,16 +19,6 @@ export default function PropertiesPage() {
     setPriceRange({ min, max });
   };
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     const res = await fetch(
-  //       "https://place-arena-backend.vercel.app/api/v1/property"
-  //     );
-  //     const data = await res.json();
-  //     setProperties(data);
-  //   }
-  //   fetchData();
-  // }, []);
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0 flex flex-col">
       {/* Page Header */}

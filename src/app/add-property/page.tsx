@@ -13,7 +13,8 @@ import { uploadImageToCloudinary } from "../lib/cloudinary";
 import { getUserProfile } from "../actions";
 import { useRouter } from "next/navigation";
 import { getToken } from "@/services/auth.service";
-// import { useRouter } from "next/router";
+import { useAuthGuard } from "@/utils/useAuthGuard";
+import Loading from "../loading";
 
 interface FormData {
   title: string;
@@ -25,7 +26,7 @@ interface FormData {
   area: string;
   description: string;
   features: string[];
-  images: string[]; // Changed from File[] to string[] for URLs
+  images: string[];
 }
 
 export default function AddProperty() {
@@ -39,7 +40,7 @@ export default function AddProperty() {
     area: "",
     description: "",
     features: [],
-    images: [], // Example images for initial state
+    images: [],
   });
 
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
@@ -48,6 +49,11 @@ export default function AddProperty() {
   const [submitStatus, setSubmitStatus] = useState("");
   const [uploadingImages, setUploadingImages] = useState<boolean[]>([]);
   const router = useRouter();
+
+  const authChecked = useAuthGuard();
+  if (!authChecked) {
+    return <Loading />;
+  }
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
