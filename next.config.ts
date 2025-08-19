@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     domains: [
       "place-arena-backend.vercel.app",
@@ -15,6 +14,7 @@ const nextConfig: NextConfig = {
       "res.cloudinary.com",
     ],
   },
+  experimental: { optimizeCss: false },
 };
 
 export default nextConfig;
