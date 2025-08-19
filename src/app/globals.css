@@ -1,11 +1,11 @@
-@import url("https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css");
+/* @import url("https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css"); */
 @import "tailwindcss";
 /* @tailwind base;
 @tailwind components;
 @tailwind utilities; */
 
 /* Other styles */
-@property --tw-translate-x {
+/* @property --tw-translate-x {
   syntax: "*";
   inherits: false;
-}
+} */
