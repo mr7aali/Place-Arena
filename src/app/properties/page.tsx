@@ -9,6 +9,7 @@ import Footer from "../../components/Footer";
 import { isLoggedIn } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 import Loading from "../loading";
+import { getHomePageProperties } from "../actions";
 
 export default function PropertiesPage() {
   const [filteredLocation, setFilteredLocation] = useState("All Areas");
@@ -18,7 +19,14 @@ export default function PropertiesPage() {
   const handlePriceRangeChange = (min: number, max: number) => {
     setPriceRange({ min, max });
   };
-
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getHomePageProperties();
+      console.log(data);
+      setProperties(data);
+    }
+    fetchData();
+  }, []);
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-20 md:pb-0 flex flex-col">
       {/* Page Header */}

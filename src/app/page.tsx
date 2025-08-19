@@ -7,8 +7,6 @@ import MobileBottomNav from "../components/MobileBottomNav";
 import dynamic from "next/dynamic";
 import Loading from "./loading";
 import { getHomePageProperties } from "./actions";
-import { getToken } from "@/services/auth.service";
-// import { getToken } from "@/services/auth.service";
 
 const PropertyGrid = dynamic(() => import("../components/PropertyGrid"), {
   ssr: false,
@@ -27,6 +25,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       const data = await getHomePageProperties();
+      console.log(data);
       setProperties(data);
     }
     fetchData();

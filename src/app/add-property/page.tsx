@@ -54,6 +54,7 @@ export default function AddProperty() {
   if (!authChecked) {
     return <Loading />;
   }
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {

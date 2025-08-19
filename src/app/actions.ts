@@ -48,5 +48,6 @@ export async function getUserProfile({
 export const getHomePageProperties = async () => {
   const res = await fetch(`${process.env.BACKEND_URL}/api/v1/property`);
   const data = await res.json();
+  console.log(data);
   return data;
 };
