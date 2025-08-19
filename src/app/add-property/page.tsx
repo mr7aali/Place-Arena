@@ -9,8 +9,11 @@ import { useState } from "react";
 import MobileBottomNav from "../../components/MobileBottomNav";
 import { availableFeatures, khulnaAreas, propertyTypes } from "@/data";
 import { uploadImageToCloudinary } from "../lib/cloudinary";
-import { get } from "http";
+
 import { getUserProfile } from "../actions";
+import { useRouter } from "next/navigation";
+import { getToken } from "@/services/auth.service";
+// import { useRouter } from "next/router";
 
 interface FormData {
   title: string;
@@ -44,7 +47,7 @@ export default function AddProperty() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState("");
   const [uploadingImages, setUploadingImages] = useState<boolean[]>([]);
-
+  const router = useRouter();
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -174,7 +177,16 @@ export default function AddProperty() {
 
     try {
       // Prepare data in the format expected by backend
-      const user = await getUserProfile();
+      const Token = getToken();
+
+      if (Token === null) {
+        router.push("/login");
+        return;
+      }
+      const user = await getUserProfile({
+        accessToken: Token.accessToken,
+        refreshToken: Token.refreshToken,
+      });
 
       const propertyData = {
         title: formData.title,
@@ -205,9 +217,6 @@ export default function AddProperty() {
           errorData.message || `HTTP error! status: ${response.status}`
         );
       }
-
-      // const result = await response.json();
-      // console.log("Property created successfully:", result);
 
       setSubmitStatus(
         "Property listed successfully! It will be reviewed and published soon."

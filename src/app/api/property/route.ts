@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       }
     );
     const responseData = await apiResponse.json();
-    console.log("API Response:", responseData);
+
     if (responseData.success) {
       return NextResponse.json(responseData.data);
     }

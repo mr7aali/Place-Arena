@@ -4,9 +4,14 @@
 
 import { useEffect, useState } from "react";
 import MobileBottomNav from "../../components/MobileBottomNav";
-import { usePathname } from "next/navigation";
-import { getUserProfile } from "../actions";
+import { usePathname, useRouter } from "next/navigation";
+// import { getUserProfile } from "../actions";
 import Link from "next/link";
+import Loading from "../loading";
+import { useAuthGuard } from "@/utils/useAuthGuard";
+import { getToken, getUserInfo } from "@/services/auth.service";
+import { getUserProfile } from "../actions";
+// import { useRouter } from "next/n";
 
 function ProfileSkeleton() {
   return (
@@ -84,36 +89,6 @@ function ProfileSkeleton() {
 }
 
 export default function Profile() {
-  // const [user] = useState({
-  //   name: "Ahmed Rahman",
-  //   email: "ahmed.rahman@email.com",
-  //   phone: "+880 1712-345678",
-  //   location: "Khulna, Bangladesh",
-  //   joinDate: "January 2024",
-  //   avatar:
-  //     "https://readdy.ai/api/search-image?query=Professional%20headshot%20of%20a%20young%20Bangladeshi%20man%20in%20business%20attire%2C%20friendly%20smile%2C%20modern%20portrait%20photography%2C%20clean%20background&width=200&height=200&seq=profile-avatar&orientation=squarish",
-  // });
-
-  // const [myProperties] = useState([
-  //   {
-  //     id: 1,
-  //     title: "Modern Family Apartment",
-  //     location: "Nirala",
-  //     rent: 25000,
-  //     status: "Available",
-  //     image:
-  //       "https://readdy.ai/api/search-image?query=Modern%20family%20apartment%20living%20room%20with%20contemporary%20furniture%20and%20decor&width=300&height=200&seq=my-prop-1&orientation=landscape",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Bachelor Studio",
-  //     location: "Sonadanga",
-  //     rent: 15000,
-  //     status: "Rented",
-  //     image:
-  //       "https://readdy.ai/api/search-image?query=Cozy%20bachelor%20studio%20apartment%20interior%20design&width=300&height=200&seq=my-prop-2&orientation=landscape",
-  //   },
-  // ]);
   type UserProfile = {
     email?: string;
     phoneNumber?: string;
@@ -139,14 +114,22 @@ export default function Profile() {
     status: string;
   }[];
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
   const [myProperties, setMyProperties] = useState<IProperty>([]);
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
+  const authChecked = useAuthGuard();
+  const router = useRouter();
+  const user = getUserInfo() as {
+    email: string;
+    sub: string;
+  };
+
   useEffect(() => {
     const fetchProperties = async () => {
-      if (!userProfile?._id) return;
+      if (!user?.sub) return;
       const res = await fetch(
-        `https://place-arena-backend.vercel.app/api/v1/property/owner/${userProfile._id}`,
+        `https://place-arena-backend.vercel.app/api/v1/property/owner/${user.sub}`,
         {
           method: "GET",
           credentials: "include",
@@ -156,12 +139,22 @@ export default function Profile() {
       setMyProperties(data);
     };
     fetchProperties();
-  }, [userProfile]);
-  console.log(myProperties);
+  }, [user]);
+
   useEffect(() => {
+    const Token = getToken();
+
+    if (Token === null) {
+      router.push("/login");
+      return;
+    }
     const fetchUserProfile = async () => {
       setIsLoading(true);
-      const userData = await getUserProfile();
+      const userData = await getUserProfile({
+        accessToken: Token?.accessToken,
+        refreshToken: Token?.refreshToken,
+      });
+
       if (!userData) {
         setUserProfile(null);
       } else {
@@ -175,7 +168,10 @@ export default function Profile() {
     } else {
       fetchUserProfile();
     }
-  }, [pathname]);
+  }, [pathname, router]);
+  if (!authChecked) {
+    return <Loading />;
+  }
   const avgRent =
     myProperties.length > 0
       ? Math.round(
