@@ -10,9 +10,9 @@ interface PriceRangeFilterProps {
 
 export default function PriceRangeFilter({
   onPriceRangeChange,
-  minPrice = 0,
-  maxPrice = 100000,
-}: PriceRangeFilterProps) {
+}: // minPrice = 0,
+// maxPrice = 100000,
+PriceRangeFilterProps) {
   const [minValue, setMinValue] = useState<string>("");
   const [maxValue, setMaxValue] = useState<string>("");
 

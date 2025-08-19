@@ -19,7 +19,7 @@ export default function PropertiesPage() {
   useEffect(() => {
     async function fetchData() {
       const data = await getHomePageProperties();
-      console.log(data);
+
       setProperties(data);
     }
     fetchData();
