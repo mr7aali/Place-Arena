@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "npx --yes lightningcss-cli --help || true"
+    "postinstall": "npx --yes npm i lightningcss-linux-x64-gnu --help || true"
   },
   "dependencies": {
     "@react-google-maps/api": "^2.19.3",
